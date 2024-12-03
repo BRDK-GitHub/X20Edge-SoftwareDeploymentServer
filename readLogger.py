@@ -1,4 +1,4 @@
-from BrLoggerFile import BrLoggerFile
+from Logger.BrLoggerFile import BrLoggerFile
 import aiohttp
 import asyncio
 
