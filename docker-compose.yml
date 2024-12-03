@@ -5,7 +5,7 @@ services:
     ports:
       - "21:21"    
       - "30000-30009:30000-30009"  # Passive ports for data transfer
-    environment: # Specify these in .env
+    environment: # Specify these in .env locally. Look in example.env for inspiration.
       PUBLICHOST: "${FTP_PUBLICHOST}"  
       FTP_USER_NAME: "${FTP_USER_NAME}"  
       FTP_USER_PASS: "${FTP_USER_PASS}"  
