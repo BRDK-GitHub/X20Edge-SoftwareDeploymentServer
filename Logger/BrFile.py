@@ -61,13 +61,21 @@ class BrFile():
     '''
     base class for all *.br files
     '''
-    def __init__(self, filename : str ):
-        self.__name = os.path.basename(filename)
-        with open(filename, 'rb') as f:
-            self._content = f.read()
+    def __init__(self, content_or_filename):
+        if isinstance(content_or_filename, str):
+            self.__name = os.path.basename(content_or_filename)
+            with open(content_or_filename, 'rb') as f:
+                self._content = f.read()
+        elif isinstance(content_or_filename, bytes):
+            self._content = content_or_filename
+            self.__name = "binary content"
+        else:
+            raise TypeError("content_or_filename must be a string or bytes")
+
         magicNumber, self._fileType, self._subType, self._fileSize  = struct.unpack_from('>HBB10xI', self._content, 0) # big-endian
         if magicNumber != 0x2b97:
             raise TypeError('content is not a B&R module !')
+
 
 
     @property

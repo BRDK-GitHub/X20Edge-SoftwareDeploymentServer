@@ -32,10 +32,11 @@ class BrLoggerFile(BrFile):
     '''
     class for a *.br file containing logger data
     '''
-    def __init__(self, filename: str):
-        super().__init__(filename)
-        if self.fileType != BrFileType.LOGGER_MODULE:
-            raise TypeError(f'content is not a B&R logger module (Type is {self.fileType})')
+    def __init__(self, content_or_filename):
+        super().__init__(content_or_filename)
+       # if self._fileType != BrFileType.LOGGER_MODULE:
+            #raise TypeError(f'content is not a B&R logger module (Type is {self._fileType})')
+
         self.__entries = None
         self.__BASE_OFFSET = 0xc0
         self.__logDataLength = struct.unpack_from('<I', self._content, 0x90)[0] # uint32
@@ -48,6 +49,7 @@ class BrLoggerFile(BrFile):
         self.__invalidLength = struct.unpack_from('<I', self._content, 0xb0)[0] # uint32
         self.__offsetUtc = struct.unpack_from('<h', self._content, 0xb4)[0] # int16
         self.__daylightSaving = struct.unpack_from('<H', self._content, 0xb6)[0] # uint16
+
 
     ## offset 0x80: b'83 B9 57 2A 9C F3 60 00 83 B9 57 2A 9C F3 60 00' ??
 

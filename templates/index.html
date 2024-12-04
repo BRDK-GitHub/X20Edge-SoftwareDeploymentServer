@@ -18,6 +18,7 @@
         <table class="min-w-full bg-white">
             <thead>
                 <tr>
+                    <th class="py-2 px-4 border-b">Select</th>
                     <th class="py-2 px-4 border-b">AR Version</th>
                     <th class="py-2 px-4 border-b">Config ID</th>
                     <th class="py-2 px-4 border-b">Config Version</th>
@@ -32,17 +33,18 @@
 
     <script>
         async function fetchData() {
-            const url = "http://localhost:5000/getVersion?ip=192.168.30.206";
+            const ips = ["192.168.30.206", "192.168.30.184"];
             const tableBody = document.getElementById('data-table');
-
-            const fetchPromises = Array.from({ length: 10 }, () => fetch(url).then(response => response.json()));
-
+    
+            const fetchPromises = ips.map(ip => fetch(`http://localhost:5000/getVersion?ip=${ip}`).then(response => response.json()));
+    
             try {
                 const results = await Promise.all(fetchPromises);
-
+    
                 results.forEach(data => {
                     const row = document.createElement('tr');
                     row.innerHTML = `
+                        <td>Test</td>
                         <td class="py-2 px-4 border-b">${data.arVersion}</td>
                         <td class="py-2 px-4 border-b">${data.configID}</td>
                         <td class="py-2 px-4 border-b">${data.configVersion}</td>
@@ -54,9 +56,10 @@
                 console.error('Error fetching data:', error);
             }
         }
-
+    
         fetchData();
     </script>
+    
 </body>
 
 </html>

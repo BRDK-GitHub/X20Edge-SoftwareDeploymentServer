@@ -10,10 +10,6 @@ async def download_binary_file(ip_address: str, output_filename: str, timeout: i
             async with session.get(url) as response:
                 if response.status == 200:
                     content = await response.read()
-                    logger_file = BrLoggerFile(content)
-                    for entry in logger_file.entries:
-                        print(entry)
-
                     with open(output_filename, 'wb') as file:
                         file.write(content)
                     return True
@@ -29,15 +25,37 @@ async def download_binary_file(ip_address: str, output_filename: str, timeout: i
     except OSError as e:
         print(f"OS error: {e}")
         return False
+    
+async def download_binary_content(ip_address: str, timeout: int = 10) -> bool:
+    url = f"http://{ip_address}/sdm/cgiFileLoop.cgi?type=16&scope=%3CDefault%3E&module=$versinfo&option=0"
+    timeout = aiohttp.ClientTimeout(total=timeout)
+    try:
+        async with aiohttp.ClientSession(timeout=timeout) as session:
+            async with session.get(url) as response:
+                if response.status == 200:
+                    content = await response.read()
+                    return content
+                else:
+                    print(f"Failed to download file. Status code: {response.status}")
+                    return False
+    except aiohttp.ClientError as e:
+        print(f"Client error: {e}")
+        return False
+    except asyncio.TimeoutError:
+        print("Request timed out")
+        return False
+    except OSError as e:
+        print(f"OS error: {e}")
+        return False
+
 
 async def readVersion(ip):
-    output_filename = 'readCpuVersion.br'
-    success = await download_binary_file(ip, output_filename)
+    contentLogger = await download_binary_content(ip)
    
-    if success:
+    if contentLogger:
         configVersionFound = False
         arVersionFound = False
-        logger_file = BrLoggerFile(output_filename)
+        logger_file = BrLoggerFile(contentLogger)
         result = {}
         
         for entry in logger_file.entries:
