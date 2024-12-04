@@ -7,11 +7,56 @@
     <title>Software Deployment Server</title>
     <script src="{{ url_for('static', filename='tailwind.js') }}"></script>
 </head>
-<body>
 
-    <h1>HOME PAGE</h1>
-    <p>hans123</p>
 
+
+
+
+<body class="bg-gray-100 p-6">
+    <div class="container mx-auto">
+        <h1 class="text-2xl font-bold mb-4">Version Data</h1>
+        <table class="min-w-full bg-white">
+            <thead>
+                <tr>
+                    <th class="py-2 px-4 border-b">AR Version</th>
+                    <th class="py-2 px-4 border-b">Config ID</th>
+                    <th class="py-2 px-4 border-b">Config Version</th>
+                    <th class="py-2 px-4 border-b">Serial Number</th>
+                </tr>
+            </thead>
+            <tbody id="data-table">
+                
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        async function fetchData() {
+            const url = "http://localhost:5000/getVersion?ip=192.168.30.206";
+            const tableBody = document.getElementById('data-table');
+
+            const fetchPromises = Array.from({ length: 10 }, () => fetch(url).then(response => response.json()));
+
+            try {
+                const results = await Promise.all(fetchPromises);
+
+                results.forEach(data => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td class="py-2 px-4 border-b">${data.arVersion}</td>
+                        <td class="py-2 px-4 border-b">${data.configID}</td>
+                        <td class="py-2 px-4 border-b">${data.configVersion}</td>
+                        <td class="py-2 px-4 border-b">${data.serialNumber}</td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        }
+
+        fetchData();
+    </script>
 </body>
 
 </html>

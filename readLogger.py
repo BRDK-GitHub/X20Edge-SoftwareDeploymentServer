@@ -10,6 +10,10 @@ async def download_binary_file(ip_address: str, output_filename: str, timeout: i
             async with session.get(url) as response:
                 if response.status == 200:
                     content = await response.read()
+                    logger_file = BrLoggerFile(content)
+                    for entry in logger_file.entries:
+                        print(entry)
+
                     with open(output_filename, 'wb') as file:
                         file.write(content)
                     return True
@@ -56,7 +60,7 @@ async def readVersion(ip):
     
 async def main():
     # Example usage to download
-    testIp = '192.168.30.184'
+    testIp = '192.168.30.206'
     testFileName = 'testLogger.br'
     await download_binary_file(testIp, testFileName)
     logger_file = BrLoggerFile(testFileName) # Access with logger_file.entries
