@@ -33,10 +33,11 @@
 
     <script>
         async function fetchData() {
-            const ips = ["192.168.30.206", "192.168.30.184"];
+            const ips = ["192.168.30.206", "192.168.30.124"];
             const tableBody = document.getElementById('data-table');
-    
-            const fetchPromises = ips.map(ip => fetch(`http://localhost:5000/getVersion?ip=${ip}`).then(response => response.json()));
+            
+            const baseUrl = `${window.location.protocol}//${window.location.hostname}:5000`; // Dynamically get hostname and protocol (http/https)
+            const fetchPromises = ips.map(ip => fetch(`${baseUrl}/getVersion?ip=${ip}`).then(response => response.json()));
     
             try {
                 const results = await Promise.all(fetchPromises);

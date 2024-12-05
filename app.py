@@ -22,12 +22,15 @@ async def browse():
     if not subnet:
         return jsonify({"error": "No subnet provided"}), 400
 
-    port = request.args.get('port', default=11169, type=int)
-    open_ips = scan_subnet(subnet, port)
+    port = 11169                         # Scan ANSL port to find B&R PLCs
+    BuR_ips = scan_subnet(subnet, port) 
 
-    return jsonify({"open_ips": open_ips})
+    return jsonify({"BuR_ips": BuR_ips})
 
 
 
 if __name__ == "__main__":
-    app.run()
+    # when calling directly from python use development mode (production will use "quart run")
+    os.environ['QUART_ENV'] = 'development'
+    os.environ['QUART_DEBUG'] = '1'
+    app.run(host='0.0.0.0', port=5000)
