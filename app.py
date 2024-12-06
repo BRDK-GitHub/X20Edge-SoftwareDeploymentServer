@@ -15,13 +15,14 @@ async def getVersion():
     result = await readVersion(ip)
     return jsonify(result)
 
-#Example: localhost:5000/browse?subnet=192.168.30.0/24
+#Example: localhost:5000/browse?subnet=192.168.30.0
 @app.route('/browse', methods=['GET'])
 async def browse():
     subnet = request.args.get('subnet')
     if not subnet:
         return jsonify({"error": "No subnet provided"}), 400
 
+    subnet = subnet+"/24"
     port = 11169                         # Scan ANSL port to find B&R PLCs
     BuR_ips = scan_subnet(subnet, port) 
 
