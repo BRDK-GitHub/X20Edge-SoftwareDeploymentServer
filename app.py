@@ -56,6 +56,25 @@ async def listFolders():
         return {"error": str(e)}, 500
 
 
+@app.route('/listUpdateInfo', methods=['GET'])
+async def listUpdateInfo():
+    try:
+        response = await listFolders()
+        folders = await response.get_json()
+        
+        folders_info = []
+        for folder in folders:
+            folder_dir = os.path.join(app.config['FTP_FOLDER'], folder)
+            config_id, PLC_version, config_version = readUpdateInfoFromFile(folder_dir)
+            folders_info.append({
+                "config_id": config_id,
+                "PLC_version": PLC_version,
+                "config_version": config_version
+            })
+        return jsonify(folders_info)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 # FILE UPLOAD:
 @app.route('/upload', methods=['POST'])
 async def upload_file():
