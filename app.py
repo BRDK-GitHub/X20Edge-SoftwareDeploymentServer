@@ -3,6 +3,7 @@ import zipfile
 from werkzeug.utils import secure_filename
 import shutil
 from readLogger import readVersion
+from readUpdate import readUpdateInfoFromFile
 from browseBuRPLC import scan_subnet
 import os
 
@@ -43,7 +44,7 @@ async def browse():
 @app.route('/listFolders', methods=['GET'])
 async def listFolders():
     folder_path = app.config['FTP_FOLDER']
-    print(folder_path)
+   
     try:
         folders = []
         for folder in os.listdir(folder_path):
@@ -56,7 +57,6 @@ async def listFolders():
 
 
 # FILE UPLOAD:
-
 @app.route('/upload', methods=['POST'])
 async def upload_file():
     files = await request.files  # Await the async property
