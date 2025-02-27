@@ -9,7 +9,6 @@ services:
       PUBLICHOST: "${FTP_PUBLICHOST}"  
       FTP_USER_NAME: "${FTP_USER_NAME}"  
       FTP_USER_PASS: "${FTP_USER_PASS}"  
-      FTP_USER_HOME: "${FTP_USER_HOME}"  
     volumes:
       - ./ftp_data:/home/ftpusers/update  # Map local folder `ftp_data` to container's FTP storage
     restart: unless-stopped
