@@ -67,6 +67,7 @@ async def listUpdateInfo():
             folder_dir = os.path.join(app.config['FTP_FOLDER'], folder)
             config_id, PLC_version, config_version = readUpdateInfoFromFile(folder_dir)
             folders_info.append({
+                "folder_name": folder,
                 "config_id": config_id,
                 "PLC_version": PLC_version,
                 "config_version": config_version
@@ -104,7 +105,7 @@ async def upload_file():
         os.remove(zip_path)
 
         return await render_template('index.html')
-        #return f"File extracted to {extract_folder}"
+    
 
     return "Invalid file type. Only .zip files are allowed.", 400
 
