@@ -3,12 +3,26 @@ services:
     image: stilliard/pure-ftpd
     container_name: ftp_server
     ports:
-      - "21:21"    
-      - "30000-30009:30000-30009"  # Passive ports for data transfer
-    environment: # Specify these in .env locally. Look in example.env for inspiration.
-      PUBLICHOST: "${FTP_PUBLICHOST}"  
-      FTP_USER_NAME: "${FTP_USER_NAME}"  
-      FTP_USER_PASS: "${FTP_USER_PASS}"  
+      - "21:21"
+      - "30000-30009:30000-30009"
+    environment:
+      PUBLICHOST: "${FTP_PUBLICHOST}"
+      FTP_USER_NAME: "${FTP_USER_NAME}"
+      FTP_USER_PASS: "${FTP_USER_PASS}"
+      FTP_USER_HOME: "/ftp-data" 
     volumes:
-      - ./ftp_data:/home/ftpusers/update  # Map local folder `ftp_data` to container's FTP storage
-    restart: unless-stopped
+      - ftp_data:/ftp-data
+    restart: always
+
+  web:
+    build: . # will build Dockerfile in the current directory
+    container_name: update-app
+    ports:
+      - "5000:5000"
+    volumes:
+      - ftp_data:/app/ftp_data  
+    restart: always
+
+volumes:
+  ftp_data:
+    driver: local # Store shared volume locally on PC
