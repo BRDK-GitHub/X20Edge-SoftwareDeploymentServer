@@ -1,6 +1,6 @@
 services:
   ftp:
-    image: stilliard/pure-ftpd
+    image: zhabba/pure-ftpd-arm64
     container_name: ftp_server
     ports:
       - "21:21"
