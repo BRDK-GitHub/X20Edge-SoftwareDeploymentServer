@@ -83,6 +83,7 @@ async def readVersion(ip):
         logger_file = BrLoggerFile(contentLogger)
         
         for entry in logger_file.entries:
+           
             if entry.EventID == 1076898066:
                 configVersionFound = True
                 config_data = entry.BinaryData.decode('utf-8', errors='ignore').split('\x00')
@@ -99,9 +100,29 @@ async def readVersion(ip):
                 return result
         
     # If not version found in versinfo log - try search in syslog
-    result = await readVersionFromSysLog(ip)
-
-    return result
+    contentLogger = await download_binary_content_syslog(ip)
+  
+    if contentLogger:
+        configVersionFound = False
+        logger_file = BrLoggerFile(contentLogger)
+        
+        for entry in logger_file.entries:
+            if entry.EventID == 3157279:
+                print("config_data: " )
+                print(entry.BinaryData)
+                config_data = entry.BinaryData.decode('utf-8').strip('\x00')
+                # Define a regex pattern to extract the ID and version
+                pattern = r'ID=\"(.*?)\".*?version=\"(.*?)\"'
+                match = re.search(pattern, config_data)
+                if match:
+                    configVersionFound = True
+                    result['configID'] = match.group(1)
+                    result['configVersion'] = match.group(2)
+            
+            # If both config and AR version found, return the result
+            if configVersionFound:
+                return result
+    return {}
 
 async def readVersionFromSysLog(ip):
     contentLogger = await download_binary_content_syslog(ip)
