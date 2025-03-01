@@ -5,6 +5,7 @@ import shutil
 from readLogger import readVersion
 from readUpdate import readUpdateInfoFromFile
 from browseBuRPLC import scan_subnet
+from SendUpdates import upload_to_ftp_servers
 import os
 
 app = Quart(__name__)
@@ -73,6 +74,36 @@ async def listUpdateInfo():
                 "config_version": config_version
             })
         return jsonify(folders_info)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+# Send Updates to PLC
+@app.route('/sendUpdates', methods=['POST'])
+async def sendUpdates():
+    try:
+        data = await request.get_json()
+
+        hostnames = data.get('servers', [])
+        updateFolderName = data.get('folderName')
+
+        if not hostnames or not updateFolderName:
+            return jsonify({"error": "Missing 'servers' or 'folderName' in request"}), 400
+
+        print("Uploading to servers:", hostnames)
+
+        username = 'admin'
+        password = 'admin'
+        folder_path = os.path.join(os.path.dirname(__file__), f'ftp_data/{updateFolderName}/Default_X20CP04xx')
+        remote_folder_path = os.path.join(os.path.dirname(__file__), f'ftp_data/{updateFolderName}/Default_X20CP04xx_RemoteInstall')
+        file_path = os.path.join(os.path.dirname(__file__), f'ftp_data/{updateFolderName}/arnbcfg.xml')
+
+        if not os.path.exists(folder_path) or not os.listdir(folder_path):
+            return jsonify({"error": f"Update folder {folder_path} does not exist or is empty"}), 400
+
+        upload_to_ftp_servers(hostnames, username, password, folder_path, remote_folder_path, file_path)
+
+        return jsonify({"message": "Update sent successfully", "servers": hostnames}), 200
+
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 

@@ -134,7 +134,7 @@ async def readVersionFromSysLog(ip):
     
 async def main():
     # Example usage to download
-    testIp = '192.168.30.206'
+    testIp = '192.168.123.39'
     testFileName = 'testLogger.br'
     await download_binary_file(testIp, testFileName)
     logger_file = BrLoggerFile(testFileName) # Access with logger_file.entries
