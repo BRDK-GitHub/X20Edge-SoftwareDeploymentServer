@@ -184,7 +184,7 @@
             <button 
                 type="button" 
                 id="sendUpdateButton" 
-                onclick="sendButtonClicked()"
+                onclick="sendUpdates()"
                 class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800 flex items-center">
                 Send Update
                 <svg 
@@ -380,6 +380,51 @@
             }
         }
 
+        async function sendUpdates() {
+            try {
+                // Get the folder name and selected endpoints (servers)
+                const folderName = getSelectedUpdate();
+                const servers = getSelectedEndpoints();
+
+                // Check if both the folderName and servers are valid
+                if (!folderName || servers.length === 0) {
+                    alert("Please select a folder and at least one server.");
+                    return;
+                }
+
+                // Prepare the payload to send to the server
+                const payload = {
+                    folderName: folderName,
+                    servers: servers
+                };
+                toggleSpinnerSendUpdate();
+                // Send the POST request to the /sendUpdates endpoint
+                const response = await fetch('/sendUpdates', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                // Handle the response
+                if (response.ok) {
+                    const data = await response.json();
+                    alert(`Update sent successfully to servers: ${data.servers.join(', ')}`);
+                } else {
+                    const data = await response.json();
+                    alert(`Error: ${data.error}`);
+                }
+            } catch (error) {
+                console.error("Error sending updates:", error);
+                alert("An error occurred while sending updates.");
+            }
+            finally{
+                toggleSpinnerSendUpdate();
+            }
+        }
+
+
         function getSelectedEndpoints() {
             const tableBody = document.getElementById('ipTable');
             const checkboxes = tableBody.querySelectorAll('input[type="checkbox"]');
@@ -445,7 +490,12 @@
         const spinner = document.getElementById('spinnerUpload');
         spinner.classList.toggle('hidden'); // Adds 'hidden' if not present, removes it if present
     }
-
+    
+     // Toggle Send spinner
+     function toggleSpinnerSendUpdate() {
+        const spinner = document.getElementById('spinnerSendUpdate');
+        spinner.classList.toggle('hidden'); // Adds 'hidden' if not present, removes it if present
+    }
 
 
     // ------------ Update Table ------------
@@ -477,11 +527,13 @@
     }
 
     function selectOnlyThis(checkbox) {
-        const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+        const tableBody = document.getElementById('updateTable'); // Limit selection to updateTable
+        const checkboxes = tableBody.querySelectorAll('input[type="checkbox"]');
         checkboxes.forEach(cb => {
-            if (cb !== checkbox) cb.checked = false;
+            if (cb !== checkbox) cb.checked = false; // Uncheck all checkboxes except the clicked one
         });
     }
+
 
         updateTableWithData();
 
