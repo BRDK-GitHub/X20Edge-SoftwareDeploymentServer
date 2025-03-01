@@ -16,10 +16,10 @@
             <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                 <tr>
                     <th scope="col" class="p-4">
-                        <div class="flex items-center">
+                       <!-- <div class="flex items-center">
                             <input id="checkbox-all" type="checkbox" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
                             <label for="checkbox-all" class="sr-only">checkbox</label>
-                        </div>
+                        </div>-->
                     </th>
                     <th scope="col" class="px-6 py-3">
                         IP Address
@@ -45,13 +45,19 @@
                 <!-- Rows will be dynamically inserted here -->
             </tbody>
         </table>
+   
         <br />
-        <div class="flex items-center">
+
+<!-- Buttons Container: Flexbox for alignment -->
+        <div class="flex items-center space-x-4">
+
+            <!-- Browse Button -->
             <button 
                 type="button" 
                 id="browseButton" 
                 onclick="browseButtonClicked()"
-                class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800 flex items-center">
+                class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800 flex items-center justify-center" 
+                style="min-width: 80px;">
                 Browse
                 <svg 
                     id="spinnerBrowse" 
@@ -68,9 +74,44 @@
                         fill="currentFill"/>
                 </svg>
             </button>
+
+            <!-- Add Button -->
+            <button 
+                type="button" 
+                id="addButton" 
+                onclick="openAddIpPopup()"
+                class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800 flex items-center justify-center" 
+                style="min-width: 80px;">
+                Add
+            </button>
+
         </div>
-        
-        
+
+        <!-- Popup for Adding IP -->
+        <div id="addIpPopup" class="hidden fixed inset-0 bg-gray-500 bg-opacity-75 flex justify-center items-center z-50">
+            <div class="bg-white p-6 rounded-lg shadow-lg w-96">
+                <h2 class="text-xl font-semibold mb-4">Add IP Address</h2>
+                <input type="text" id="ipInput" placeholder="Enter IP address" class="border p-2 rounded w-full mb-4">
+                <button 
+                    type="button" 
+                    onclick="submitAddIp()" 
+                    class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
+                    Add IP
+                </button>
+                <button 
+                    type="button" 
+                    onclick="closeAddIpPopup()" 
+                    class="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mt-2 dark:bg-red-600 dark:hover:bg-red-700 focus:outline-none dark:focus:ring-red-800">
+                    Cancel
+                </button>
+            </div>
+        </div>
+
+
+
+
+</div>
+
     </div>
 
     
@@ -462,6 +503,95 @@
             console.error('Error:', error);
         });
     });
+
+    // Function to add an IP to the table and fetch its version info
+    async function addIp(ip) {
+        // Check if the IP already exists in the list to avoid duplicates
+        if (BuR_ips.includes(ip)) {
+            alert('This IP is already in the list.');
+            return;
+        }
+
+        // Add the IP to the list
+        BuR_ips.push(ip);
+        saveIps(); // Save the updated list to localStorage
+
+        // Add the IP to the table
+        const tableBody = document.getElementById('ipTable');
+
+        // Create a new row for the IP
+        const row = document.createElement('tr');
+        row.classList.add('bg-white', 'border-b', 'dark:bg-gray-800', 'dark:border-gray-700', 'hover:bg-gray-50', 'dark:hover:bg-gray-600');
+
+        row.innerHTML = `
+            <td class="w-4 p-4">
+                <div class="flex items-center">
+                    <input type="checkbox" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                    <label class="sr-only">checkbox</label>
+                </div>
+            </td>
+            <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">${ip}</td>
+            <td class="px-6 py-4">Loading...</td>
+            <td class="px-6 py-4">Loading...</td>
+            <td class="px-6 py-4">Loading...</td>
+            <td class="px-6 py-4 serial-number">Loading...</td>
+            <td class="px-6 py-4">
+                <button class="text-red-500 hover:text-red-700 font-bold ml-4" onclick="removeRow(this, '${ip}')">X</button>
+            </td>
+        `;
+
+        tableBody.appendChild(row);
+
+        // Fetch version information and update the table row for the IP
+        const versionInfo = await fetchVersion(ip);
+
+        // Update the row with the fetched version info
+        const rows = tableBody.querySelectorAll('tr');
+        rows.forEach(row => {
+            if (row.cells[1].textContent === ip) {
+                row.cells[2].textContent = versionInfo.configVersion;
+                row.cells[3].textContent = versionInfo.configID;
+                row.cells[4].textContent = versionInfo.arVersion;
+                const serialNumberCell = row.cells[5];
+                serialNumberCell.textContent = versionInfo.serialNumber;
+
+                // Add click event to open a new tab with the serial number URL
+                serialNumberCell.addEventListener('click', () => {
+                    const url = `https://www.br-automation.com/da/search/?q=${versionInfo.serialNumber}`;
+                    window.open(url, '_blank');
+                });
+            }
+        });
+    }
+
+
+    // Add button
+    // Function to open the popup
+    function openAddIpPopup() {
+        const popup = document.getElementById('addIpPopup');
+        popup.classList.remove('hidden'); // Show the popup
+    }
+
+    // Function to close the popup
+    function closeAddIpPopup() {
+        const popup = document.getElementById('addIpPopup');
+        popup.classList.add('hidden'); // Hide the popup
+    }
+
+    // Function to submit the IP and add it
+    function submitAddIp() {
+        const ipInput = document.getElementById('ipInput');
+        const ip = ipInput.value.trim();
+
+        if (ip) {
+            addIp(ip); // Call the addIp function with the input IP
+            ipInput.value = ''; // Clear the input field
+            closeAddIpPopup(); // Close the popup
+        } else {
+            alert('Please enter a valid IP address.');
+        }
+    }
+
     </script>   
 </body>
 
