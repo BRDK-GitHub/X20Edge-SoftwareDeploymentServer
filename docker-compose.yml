@@ -23,6 +23,15 @@ services:
       - ftp_data:/app/ftp_data  
     restart: always
 
+  opcuaclient:
+    build:
+      context: ./OpcuaClient
+      dockerfile: Dockerfile
+    container_name: opcua-client
+    ports:
+      - "4840:4840"
+    restart: always
+
 volumes:
   ftp_data:
     driver: local # Store shared volume locally on PC
