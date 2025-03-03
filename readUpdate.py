@@ -1,5 +1,8 @@
 import os
 import xml.etree.ElementTree as ET
+import logging
+
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 def readUpdateInfoFromFile(directory):
     # Recursively search for pipconfig.xml which contains the info
@@ -28,6 +31,8 @@ def readUpdateFolderName(directory_path):
 
         # Check if the XML file exists
         if not os.path.isfile(xml_file_path):
+            logging.info(f"readUpdateFolderName failed: XML file not found ")
+            logging.info(f"directory_path: {directory_path}")
             return ''
         
         # Parse the XML file
@@ -48,7 +53,7 @@ def readUpdateFolderName(directory_path):
         return ''
     except Exception as e:
         # In case of any error, return an empty string
-        print(f"Error: {e}")
+        logging.info(f"readUpdateFolderName failed: {e}")
         return ''
 
 

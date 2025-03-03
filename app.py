@@ -7,6 +7,7 @@ from readUpdate import readUpdateInfoFromFile, readUpdateFolderName
 from browseBuRPLC import scan_subnet
 from SendUpdates import upload_to_ftp_servers
 import os
+import logging
 
 app = Quart(__name__)
 
@@ -18,6 +19,7 @@ app.config['MAX_CONTENT_LENGTH'] = 100 * 1024 * 1024  # 100 MB limit
 # If folders doesn't exist create it
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 os.makedirs(FTP_FOLDER, exist_ok=True)
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 @app.route("/")
 async def index():
@@ -91,13 +93,19 @@ async def sendUpdates():
 
         print("Uploading to servers:", hostnames)
 
-        username = 'admin'
-        password = 'admin'
+        username = 'admin' #
+        password = 'admin' # Should it come from somwhere else? :)
 
-        updateFolderType = readUpdateFolderName(f"ftp_data\\{updateFolderName}") # example for compact plc: Default_X20CP04xx (it read it from arnbcfg.xml)
+        tmpPath = os.path.join(os.path.dirname(__file__), "ftp_data", updateFolderName)
+        updateFolderType = readUpdateFolderName(tmpPath)
+
+        if updateFolderType=='':
+            logging.info("Invalid updateFolderType")
+
         folder_path = os.path.join(os.path.dirname(__file__), f'ftp_data/{updateFolderName}/{updateFolderType}')
         remote_folder_path = os.path.join(os.path.dirname(__file__), f'ftp_data/{updateFolderName}/{updateFolderType}_RemoteInstall')
         file_path = os.path.join(os.path.dirname(__file__), f'ftp_data/{updateFolderName}/arnbcfg.xml')
+
 
         if not os.path.exists(folder_path) or not os.listdir(folder_path):
             return jsonify({"error": f"Update folder {folder_path} does not exist or is empty"}), 400

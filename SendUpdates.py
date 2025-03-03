@@ -67,7 +67,7 @@ def upload_to_ftp_server(server, username, password, folder_path, remote_folder_
         ftp.login(username, password)
         #print(f"Connected to {server}")
         logging.info(f"Connected to {server}")
-
+        logging.info(f"Folderpath: {folder_path}")
         # Change to the root directory
         ftp.cwd('/')
 
