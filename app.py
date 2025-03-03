@@ -3,7 +3,7 @@ import zipfile
 from werkzeug.utils import secure_filename
 import shutil
 from readLogger import readVersion
-from readUpdate import readUpdateInfoFromFile
+from readUpdate import readUpdateInfoFromFile, readUpdateFolderName
 from browseBuRPLC import scan_subnet
 from SendUpdates import upload_to_ftp_servers
 import os
@@ -93,6 +93,8 @@ async def sendUpdates():
 
         username = 'admin'
         password = 'admin'
+
+        updateFolderName = readUpdateFolderName(f"ftp_data\\{updateFolderName}")
         folder_path = os.path.join(os.path.dirname(__file__), f'ftp_data/{updateFolderName}/Default_X20CP04xx')
         remote_folder_path = os.path.join(os.path.dirname(__file__), f'ftp_data/{updateFolderName}/Default_X20CP04xx_RemoteInstall')
         file_path = os.path.join(os.path.dirname(__file__), f'ftp_data/{updateFolderName}/arnbcfg.xml')

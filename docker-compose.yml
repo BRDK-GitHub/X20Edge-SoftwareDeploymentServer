@@ -9,9 +9,9 @@ services:
       PUBLICHOST: "${FTP_PUBLICHOST}"
       FTP_USER_NAME: "${FTP_USER_NAME}"
       FTP_USER_PASS: "${FTP_USER_PASS}"
-      FTP_USER_HOME: "/ftp-data" 
+      FTP_USER_HOME: "/ftp_data" 
     volumes:
-      - ftp_data:/ftp-data
+      - ftp_data:/ftp_data
     restart: always
 
   web:
