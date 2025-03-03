@@ -94,9 +94,9 @@ async def sendUpdates():
         username = 'admin'
         password = 'admin'
 
-        updateFolderName = readUpdateFolderName(f"ftp_data\\{updateFolderName}")
-        folder_path = os.path.join(os.path.dirname(__file__), f'ftp_data/{updateFolderName}/Default_X20CP04xx')
-        remote_folder_path = os.path.join(os.path.dirname(__file__), f'ftp_data/{updateFolderName}/Default_X20CP04xx_RemoteInstall')
+        updateFolderType = readUpdateFolderName(f"ftp_data\\{updateFolderName}") # example for compact plc: Default_X20CP04xx (it read it from arnbcfg.xml)
+        folder_path = os.path.join(os.path.dirname(__file__), f'ftp_data/{updateFolderName}/{updateFolderType}')
+        remote_folder_path = os.path.join(os.path.dirname(__file__), f'ftp_data/{updateFolderName}/{updateFolderType}_RemoteInstall')
         file_path = os.path.join(os.path.dirname(__file__), f'ftp_data/{updateFolderName}/arnbcfg.xml')
 
         if not os.path.exists(folder_path) or not os.listdir(folder_path):
