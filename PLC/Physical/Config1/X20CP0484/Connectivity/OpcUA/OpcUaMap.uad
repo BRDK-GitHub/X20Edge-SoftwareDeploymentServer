@@ -17,6 +17,13 @@
         <Variable Name="CheckVersion" />
         <Variable Name="DownloadUpdate" />
         <Variable Name="ExecuteUpdate" />
+        <Variable Name="updateFolderName" />
+        <Variable Name="state" />
+        <Variable Name="reset" />
+        <Variable Name="ArProjectGetPackageInfo_0">
+          <Variable Name="ConfigurationID" />
+          <Variable Name="ConfigurationVersion" />
+        </Variable>
       </Task>
     </Module>
   </DefaultView>

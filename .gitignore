@@ -8,3 +8,5 @@ zip_data
 PLC/Temp
 PLC/Binaries
 PLC/Diagnosis
+*.set
+*.isopen

@@ -8,8 +8,7 @@
       <Parameter ID="ActivateDevice" Value="1" />
       <Parameter ID="ActivateSnmp" Value="2" />
     </Connector>
-    <Parameter ID="ConfigurationID" Value="HorribleSoftware" />
-    <Parameter ID="ConfigVersion" Value="1.2.3" />
+    <Parameter ID="ConfigurationID" Value="AwesomeSoftware" />
     <Parameter ID="UserPartitionSize" Value="100" />
     <Parameter ID="EnableUsbRemoteInstall" Value="1" />
     <Parameter ID="EnableCfRemoteInstall" Value="1" />
