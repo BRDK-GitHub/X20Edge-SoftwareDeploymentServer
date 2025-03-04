@@ -1,0 +1,8 @@
+{
+    "server_url": "opc.tcp://192.168.30.100:4840",
+    "nodes": {
+      "SoftwareName": "ns=6;s=::PullUpdate:ArProjectGetInfo_0.ConfigurationID",
+      "SoftwareVersion": "ns=6;s=::PullUpdate:ArProjectGetInfo_0.ConfigurationVersion"
+    }
+  }
+  

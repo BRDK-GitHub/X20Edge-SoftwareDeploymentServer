@@ -1,44 +1,48 @@
 import asyncio
 import logging
 import sys
+import json
 from asyncua import Client
 
-# OPC UA Server URL
-URL = "opc.tcp://192.168.30.100:4840"
-
-# OPC UA Node to read
-SoftwareNameNodeId = "ns=6;s=::PullUpdate:ArProjectGetInfo_0.ConfigurationID"
-SoftwareVersionNodeId = "ns=6;s=::PullUpdate:ArProjectGetInfo_0.ConfigurationVersion"
+# Load configuration from JSON file
+def load_config(file_path="config.json"):
+    try:
+        with open(file_path, "r") as file:
+            return json.load(file)
+    except Exception as e:
+        logging.error(f"Failed to load configuration: {e}")
+        sys.exit(1)
 
 # Set up logging configuration
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
-async def monitor_opcua_node(interval=2):
-    client = Client(URL)
-
+async def monitor_opcua_node(config, interval=2):
+    client = Client(config["server_url"])
+    
     try:
         await client.connect()
-        logging.info(f"Connected to OPC UA Server: {URL}")
-        nodeName = client.get_node(SoftwareNameNodeId)
-        nodeVersion = client.get_node(SoftwareVersionNodeId)
-
+        logging.info(f"Connected to OPC UA Server: {config['server_url']}")
+        
+        nodes = {}
+        for key, node_id in config["nodes"].items():
+            nodes[key] = client.get_node(node_id)
+        
         while True:
-            name = await nodeName.read_value()
-            version = await nodeVersion.read_value()
             logging.info("----------------------------")
-            logging.info(f"Software Name: {name}")
-            logging.info(f"Software Version: {version}")
+            for key, node in nodes.items():
+                value = await node.read_value()
+                logging.info(f"{key}: {value}")
             logging.info("----------------------------")
             
             await asyncio.sleep(interval)  # Wait before reading again
-
+    
     except Exception as e:
         logging.error(f"Error: {e}")
-
+    
     finally:
         await client.disconnect()
         logging.info("Disconnected from OPC UA Server")
 
 if __name__ == "__main__":
-    logging.info(f"Running OPC UA Client to monitor node {SoftwareNameNodeId} and {SoftwareVersionNodeId}")
-    asyncio.run(monitor_opcua_node(interval=2))
+    config = load_config("nodesToRead.json")
+    asyncio.run(monitor_opcua_node(config, interval=2))

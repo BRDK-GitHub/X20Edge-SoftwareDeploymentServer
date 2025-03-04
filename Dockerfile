@@ -10,8 +10,8 @@ COPY . .
 # Install dependencies
 RUN pip install -r requirements.txt
 
-# Expose the port Quart runs on (adjust if needed)
+# Expose the port Quart runs on
 EXPOSE 5000
 
-# Run the Quart app - corresponds to quart run --host=0.0.0.0 --port=5000
+# corresponds to quart run --host=0.0.0.0 --port=5000
 CMD ["quart", "run", "--host=0.0.0.0", "--port=5000"]
