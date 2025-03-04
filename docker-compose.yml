@@ -6,9 +6,9 @@ services:
       - "21:21"
       - "30000-30009:30000-30009"
     environment:
-      PUBLICHOST: ""        # TODO: Use your own .env
-      FTP_USER_NAME: ""     # TODO: Use your own .env
-      FTP_USER_PASS: ""     # TODO: Use your own .env
+      PUBLICHOST: "${FTP_PUBLICHOST}"
+      FTP_USER_NAME: "${FTP_USER_NAME}"
+      FTP_USER_PASS: "${FTP_USER_PASS}"
       FTP_USER_HOME: "/ftp_data" 
     volumes:
       - ftp_data:/ftp_data
@@ -21,6 +21,15 @@ services:
       - "5000:5000"
     volumes:
       - ftp_data:/app/ftp_data  
+    restart: always
+
+  opcuaclient:
+    build:
+      context: ./OpcuaClient
+      dockerfile: Dockerfile
+    container_name: opcua-client
+    ports:
+      - "4840:4840"
     restart: always
 
 volumes:

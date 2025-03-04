@@ -1,0 +1,13 @@
+VAR
+	state : USINT;
+	DevLink_0 : DevLink;
+	DirCopy_0 : DirCopy;
+	updateFolderName : STRING[80];
+	reset : BOOL;
+	ArProjectGetInfo_0 : ArProjectGetInfo;
+	DownloadUpdate : BOOL;
+	ExecuteUpdate : BOOL;
+	ArProjectInstallPackage_0 : ArProjectInstallPackage;
+	CheckVersion : BOOL;
+	ArProjectGetPackageInfo_0 : ArProjectGetPackageInfo;
+END_VAR

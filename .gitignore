@@ -5,3 +5,6 @@ __pycache__
 secrets.txt
 ftp_data/*
 zip_data
+PLC/Temp
+PLC/Binaries
+PLC/Diagnosis
