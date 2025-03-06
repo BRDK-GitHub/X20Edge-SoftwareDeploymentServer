@@ -1,6 +1,3 @@
----
-sidebar_position: 8
----
 
 # 🚀 Deployment Workshop
 
@@ -33,8 +30,6 @@ Once the containers are running, open the frontend in your browser at:
 ```
 http://<EDGE_IP>:5000
 ```
-
-![alt text](image-8.png)
 
 ####  Browse
 Explore the available B&R PLCs on the network.
