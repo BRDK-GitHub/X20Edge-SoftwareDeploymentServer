@@ -10,7 +10,7 @@ Create an `.env` file and fill it with the necessary information. Use `example.e
 In `docker-compose.yml`, set your environment variables using the syntax:
 
 ```yaml
-{ENVIRONMENT_VAR_NAME}
+{$ENVIRONMENT_VAR_NAME}
 ```
 
 Read through the `docker-compose.yml` file and try to understand each line. Consider the following questions:
