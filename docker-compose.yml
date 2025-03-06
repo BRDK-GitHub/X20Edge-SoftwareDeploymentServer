@@ -1,17 +1,15 @@
 services:
   ftp:
-    image: zhabba/pure-ftpd-arm64
+    build:
+      context: ./FtpServer
+      dockerfile: Dockerfile
     container_name: ftp_server
     ports:
       - "21:21"
-      - "30000-30009:30000-30009"
-    environment:
-      PUBLICHOST: "${FTP_PUBLICHOST}"
-      FTP_USER_NAME: "${FTP_USER_NAME}"
-      FTP_USER_PASS: "${FTP_USER_PASS}"
-      FTP_USER_HOME: "/ftp_data" 
+      - "30000-30010:30000-30010"
+    env_file: .env 
     volumes:
-      - ftp_data:/ftp_data
+      - ftp_data:/app/ftp_data
     restart: always
 
   web:
